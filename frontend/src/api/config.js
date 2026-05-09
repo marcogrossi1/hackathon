@@ -2,7 +2,7 @@
 export const BACKEND_ORIGIN = 'http://localhost:8000/api'
 
 /** Paths match this repo’s controllers (no `/api` prefix on the JVM). */
-export const URL_ATIVOS = `${BACKEND_ORIGIN}/equipamento`
+export const URL_ATIVOS = `${BACKEND_ORIGIN}/equipamento/listar`
 export const URL_EQUIPAMENTO_CRIA = `${BACKEND_ORIGIN}/equipamento/cria`
 export const URL_LOCALIZACAO_LISTA = `${BACKEND_ORIGIN}/localizacao/listar`
 export const URL_ORDEM = `${BACKEND_ORIGIN}/ordemServico`
