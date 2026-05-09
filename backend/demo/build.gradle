@@ -29,3 +29,17 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+def repoRoot = rootProject.projectDir.parentFile.parentFile
+
+tasks.register('ensurePostgresContainer', Exec) {
+	group = 'development'
+	description = 'Starts Postgres via docker compose at repo root. Omit with -PskipCompose.'
+	onlyIf { !project.hasProperty('skipCompose') }
+	workingDir repoRoot
+	commandLine 'docker', 'compose', 'up', '-d', 'db'
+}
+
+tasks.named('bootRun') {
+	dependsOn 'ensurePostgresContainer'
+}
