@@ -19,7 +19,7 @@ public class EnderecoServico implements IEnderecoServico {
 
 	@Override
 	public Endereco salvar(Endereco endereco) {
-		return enderecoRepositorio.save(endereco);
+		return enderecoRepositorio.salvar(endereco);
 	}
 
 	@Override
@@ -27,6 +27,6 @@ public class EnderecoServico implements IEnderecoServico {
 		if (id == null) {
 			return Optional.empty();
 		}
-		return enderecoRepositorio.findById(id);
+		return enderecoRepositorio.obtemPorId(id);
 	}
 }
