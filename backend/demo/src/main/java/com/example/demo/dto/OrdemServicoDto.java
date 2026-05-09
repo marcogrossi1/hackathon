@@ -12,16 +12,21 @@ public class OrdemServicoDto {
 	private String status;
 	private String descricao;
 	private String area;
+	private UUID equipamentoId;
+	private UUID localizacaoId;
 
 	public OrdemServicoDto() {
 	}
 
-	public OrdemServicoDto(UUID id, String clienteCpf, String status, String descricao, String area) {
+	public OrdemServicoDto(UUID id, String clienteCpf, String status, String descricao, String area,
+			UUID equipamentoId, UUID localizacaoId) {
 		this.id = id;
 		this.clienteCpf = clienteCpf;
 		this.status = status;
 		this.descricao = descricao;
 		this.area = area;
+		this.equipamentoId = equipamentoId;
+		this.localizacaoId = localizacaoId;
 	}
 
 	public UUID getId() {
@@ -62,5 +67,21 @@ public class OrdemServicoDto {
 
 	public void setArea(String area) {
 		this.area = area;
+	}
+
+	public UUID getEquipamentoId() {
+		return equipamentoId;
+	}
+
+	public void setEquipamentoId(UUID equipamentoId) {
+		this.equipamentoId = equipamentoId;
+	}
+
+	public UUID getLocalizacaoId() {
+		return localizacaoId;
+	}
+
+	public void setLocalizacaoId(UUID localizacaoId) {
+		this.localizacaoId = localizacaoId;
 	}
 }

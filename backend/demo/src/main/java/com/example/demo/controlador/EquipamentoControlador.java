@@ -1,5 +1,7 @@
 package com.example.demo.controlador;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,7 +18,7 @@ import com.example.demo.servico.EquipamentoServico;
 @RestController
 @RequestMapping(
 		// APIProtegidoConfig.PATH +
-		"/equipamento")
+		"/api/equipamento")
 public class EquipamentoControlador {
 
 	private final EquipamentoServico equipamentoServico;
@@ -25,6 +27,13 @@ public class EquipamentoControlador {
 	public EquipamentoControlador(EquipamentoServico equipamentoServico, EquipamentoMapeador equipamentoMapeador) {
 		this.equipamentoServico = equipamentoServico;
 		this.equipamentoMapeador = equipamentoMapeador;
+	}
+
+	@GetMapping("/listar")
+	public List<EquipamentoDto> listar() {
+		return equipamentoServico.listar().stream()
+				.map(equipamentoMapeador::paraDto)
+				.toList();
 	}
 
 	@GetMapping("/obtemPorCodigo")

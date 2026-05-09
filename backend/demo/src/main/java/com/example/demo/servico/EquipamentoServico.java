@@ -1,5 +1,7 @@
 package com.example.demo.servico;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entidade.Equipamento;
@@ -12,6 +14,11 @@ public class EquipamentoServico implements IEquipamentoServico {
 
 	public EquipamentoServico(EquipamentoRepositorio equipamentoRepositorio) {
 		this.equipamentoRepositorio = equipamentoRepositorio;
+	}
+
+	@Override
+	public List<Equipamento> listar() {
+		return equipamentoRepositorio.findAllComLocalizacao();
 	}
 
 	@Override

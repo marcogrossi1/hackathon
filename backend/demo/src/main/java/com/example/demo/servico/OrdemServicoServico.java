@@ -23,6 +23,9 @@ public class OrdemServicoServico implements IOrdemServicoServico {
 
 	@Override
 	public OrdemServico cria(OrdemServico ordemServico) {
+		if (ordemServico.getEquipamento() == null) {
+			throw new IllegalArgumentException("equipamentoId obrigatório: informe o id de um equipamento cadastrado.");
+		}
 		return ordemServicoRepositorio.save(ordemServico);
 	}
 
@@ -36,7 +39,7 @@ public class OrdemServicoServico implements IOrdemServicoServico {
 		if (ordemServico == null || ordemServico.getId() == null) {
 			return null;
 		}
-		return ordemServicoRepositorio.findById(ordemServico.getId()).map(existente -> {
+		return ordemServicoRepositorio.obtemPorIdComEquipamento(ordemServico.getId()).map(existente -> {
 			if (ordemServico.getCliente() != null) {
 				existente.setCliente(ordemServico.getCliente());
 				if (ordemServico.getClienteCpf() != null && !ordemServico.getClienteCpf().isBlank()) {
@@ -45,6 +48,9 @@ public class OrdemServicoServico implements IOrdemServicoServico {
 					clienteRepositorio.findById(ordemServico.getCliente())
 							.ifPresent(c -> existente.setClienteCpf(c.getCpf()));
 				}
+			}
+			if (ordemServico.getEquipamento() != null) {
+				existente.setEquipamento(ordemServico.getEquipamento());
 			}
 			existente.setStatus(ordemServico.getStatus());
 			existente.setDescricao(ordemServico.getDescricao());
@@ -55,11 +61,11 @@ public class OrdemServicoServico implements IOrdemServicoServico {
 
 	@Override
 	public OrdemServico obtemPorId(UUID id) {
-		return ordemServicoRepositorio.findById(id).orElse(null);
+		return ordemServicoRepositorio.obtemPorIdComEquipamento(id).orElse(null);
 	}
 
 	@Override
 	public List<OrdemServico> lista() {
-		return ordemServicoRepositorio.findAll();
+		return ordemServicoRepositorio.findAllComEquipamento();
 	}
 }

@@ -22,7 +22,7 @@ import com.example.demo.mapeador.OrdemServicoMapeador;
 import com.example.demo.servico.OrdemServicoServico;
 
 @RestController
-@RequestMapping("/ordemServico")
+@RequestMapping("/api/ordemServico")
 public class OrdemServicoControladora {
 
 	private final OrdemServicoServico ordemServicoServico;
@@ -43,7 +43,15 @@ public class OrdemServicoControladora {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
 					"Informe clienteCpf ou clientCpf com o CPF de um cliente já cadastrado (POST /cliente/criarCliente).");
 		}
-		return ordemServicoMapeador.paraDto(ordemServicoServico.cria(entidade));
+		if (entidade.getEquipamento() == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+					"Informe equipamentoId com o id de um equipamento já cadastrado (POST /equipamento/criarEquipamento).");
+		}
+		try {
+			return ordemServicoMapeador.paraDto(ordemServicoServico.cria(entidade));
+		} catch (IllegalArgumentException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+		}
 	}
 
 	@DeleteMapping("/deleta")
