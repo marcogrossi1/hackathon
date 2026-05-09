@@ -42,7 +42,7 @@ public class EquipamentoControlador {
 		return equipamento == null ? null : equipamentoMapeador.paraDto(equipamento);
 	}
 
-	@PostMapping("/criarEquipamento")
+	@PostMapping("/criar")
 	public EquipamentoDto criarEquipamento(@RequestBody EquipamentoDto dto) {
 		return equipamentoMapeador.paraDto(
 				equipamentoServico.criar(equipamentoMapeador.paraEntidade(dto)));

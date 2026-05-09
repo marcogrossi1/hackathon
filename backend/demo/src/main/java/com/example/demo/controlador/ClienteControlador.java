@@ -27,7 +27,7 @@ public class ClienteControlador {
         return cliente == null ? null : clienteMapeador.paraDto(cliente);
     }
 
-    @PostMapping("/criarCliente")
+    @PostMapping("/criar")
     public ClienteDto criarCliente(@RequestBody ClienteDto dto) {
         return clienteMapeador.paraDto(clienteServico.criar(clienteMapeador.paraEntidade(dto)));
     }
