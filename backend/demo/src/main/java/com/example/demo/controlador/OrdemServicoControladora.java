@@ -47,7 +47,7 @@ public class OrdemServicoControladora {
 	}
 
 	@DeleteMapping("/deleta")
-	public ResponseEntity<Void> deleta(@RequestParam("id") UUID id) {
+	public ResponseEntity<Void> deleta(@RequestBody UUID id) {
 		ordemServicoServico.deleta(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
