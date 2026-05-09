@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { URL_ORDEM_ATUALIZA, URL_ORDEM_LISTA } from '../api/config.js'
+import { Modal } from '../components/Modal.jsx'
+import { URL_ORDEM_ATUALIZA, URL_ORDEM_CRIA, URL_ORDEM_LISTA } from '../api/config.js'
 import { jsonFetch } from '../api/http.js'
 import { ORDEM_STATUS_OPTIONS } from '../constants/ordemStatus.js'
 
@@ -46,10 +47,20 @@ function bodyForUpdate(row, status) {
   }
 }
 
+const emptyCreateForm = () => ({
+  clienteCpf: '',
+  status: ORDEM_STATUS_OPTIONS[0],
+  descricao: '',
+  area: '',
+})
+
 export function OrdensServicoPage() {
   const [rows, setRows] = useState(/** @type {OrdemRow[]} */ ([]))
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(/** @type {string | null} */ (null))
+  const [modalOpen, setModalOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [createForm, setCreateForm] = useState(emptyCreateForm)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -71,6 +82,34 @@ export function OrdensServicoPage() {
     }, 0)
     return () => clearTimeout(t)
   }, [load])
+
+  function openCreateModal() {
+    setError(null)
+    setCreateForm(emptyCreateForm())
+    setModalOpen(true)
+  }
+
+  async function submitCreate() {
+    setSaving(true)
+    setError(null)
+    try {
+      await jsonFetch(URL_ORDEM_CRIA, {
+        method: 'POST',
+        body: JSON.stringify({
+          clienteCpf: createForm.clienteCpf.trim(),
+          status: createForm.status,
+          descricao: createForm.descricao.trim() || null,
+          area: createForm.area.trim() || null,
+        }),
+      })
+      setModalOpen(false)
+      await load()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Não foi possível criar a ordem.')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   /**
    * @param {OrdemRow} row
@@ -95,7 +134,12 @@ export function OrdensServicoPage() {
 
   return (
     <>
-      <h2 className="erp-page-title">Ordens de Serviço</h2>
+      <div className="erp-page-toolbar">
+        <h2 className="erp-page-title">Ordens de Serviço</h2>
+        <button type="button" className="erp-btn-add" aria-label="Nova ordem de serviço" onClick={openCreateModal}>
+          +
+        </button>
+      </div>
       {error ? (
         <div className="erp-banner erp-banner--error" role="alert">
           {error}
@@ -160,6 +204,73 @@ export function OrdensServicoPage() {
           </div>
         )}
       </div>
+
+      <Modal
+        open={modalOpen}
+        title="Nova ordem de serviço"
+        onClose={() => {
+          if (!saving) {
+            setModalOpen(false)
+          }
+        }}
+        footer={
+          <>
+            <button type="button" className="erp-btn-ghost" disabled={saving} onClick={() => setModalOpen(false)}>
+              Cancelar
+            </button>
+            <button type="button" className="erp-btn-primary" disabled={saving} onClick={() => void submitCreate()}>
+              {saving ? 'Salvando…' : 'Criar'}
+            </button>
+          </>
+        }
+      >
+        <div className="erp-form-stack">
+          <p className="erp-form-hint">O CPF deve pertencer a um cliente já cadastrado.</p>
+          <div className="erp-field">
+            <label htmlFor="os-create-cpf">Cliente (CPF)</label>
+            <input
+              id="os-create-cpf"
+              className="erp-input"
+              value={createForm.clienteCpf}
+              onChange={(e) => setCreateForm((f) => ({ ...f, clienteCpf: e.target.value }))}
+              autoComplete="off"
+            />
+          </div>
+          <div className="erp-field">
+            <label htmlFor="os-create-status">Status</label>
+            <select
+              id="os-create-status"
+              className="erp-select"
+              style={{ width: '100%', minWidth: 0 }}
+              value={createForm.status}
+              onChange={(e) => setCreateForm((f) => ({ ...f, status: e.target.value }))}
+            >
+              {ORDEM_STATUS_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="erp-field">
+            <label htmlFor="os-create-desc">Descrição</label>
+            <textarea
+              id="os-create-desc"
+              value={createForm.descricao}
+              onChange={(e) => setCreateForm((f) => ({ ...f, descricao: e.target.value }))}
+            />
+          </div>
+          <div className="erp-field">
+            <label htmlFor="os-create-area">Área</label>
+            <input
+              id="os-create-area"
+              className="erp-input"
+              value={createForm.area}
+              onChange={(e) => setCreateForm((f) => ({ ...f, area: e.target.value }))}
+            />
+          </div>
+        </div>
+      </Modal>
     </>
   )
 }
