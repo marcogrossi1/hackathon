@@ -1,19 +1,24 @@
 package com.example.demo.mapeador;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 
 import com.example.demo.dto.OrdemServicoDto;
 import com.example.demo.entidade.Cliente;
 import com.example.demo.entidade.OrdemServico;
 import com.example.demo.repositorio.ClienteRepositorio;
+import com.example.demo.repositorio.EquipamentoRepositorio;
 
 @Component
 public class OrdemServicoMapeador {
 
 	private final ClienteRepositorio clienteRepositorio;
+	private final EquipamentoRepositorio equipamentoRepositorio;
 
-	public OrdemServicoMapeador(ClienteRepositorio clienteRepositorio) {
+	public OrdemServicoMapeador(ClienteRepositorio clienteRepositorio, EquipamentoRepositorio equipamentoRepositorio) {
 		this.clienteRepositorio = clienteRepositorio;
+		this.equipamentoRepositorio = equipamentoRepositorio;
 	}
 
 	public OrdemServicoDto paraDto(OrdemServico os) {
@@ -24,7 +29,13 @@ public class OrdemServicoMapeador {
 		if ((cpf == null || cpf.isBlank()) && os.getCliente() != null) {
 			cpf = clienteRepositorio.findById(os.getCliente()).map(Cliente::getCpf).orElse(null);
 		}
-		return new OrdemServicoDto(os.getId(), cpf, os.getStatus(), os.getDescricao(), os.getArea());
+		UUID equipamentoId = os.getEquipamento() == null ? null : os.getEquipamento().getId();
+		UUID localizacaoId = null;
+		if (os.getEquipamento() != null && os.getEquipamento().getLocalizacao() != null) {
+			localizacaoId = os.getEquipamento().getLocalizacao().getId();
+		}
+		return new OrdemServicoDto(os.getId(), cpf, os.getStatus(), os.getDescricao(), os.getArea(), equipamentoId,
+				localizacaoId);
 	}
 
 	public OrdemServico paraEntidade(OrdemServicoDto dto) {
@@ -47,6 +58,9 @@ public class OrdemServicoMapeador {
 		os.setStatus(dto.getStatus());
 		os.setDescricao(dto.getDescricao());
 		os.setArea(dto.getArea());
+		if (dto.getEquipamentoId() != null) {
+			equipamentoRepositorio.obtemPorId(dto.getEquipamentoId()).ifPresent(os::setEquipamento);
+		}
 		return os;
 	}
 }
