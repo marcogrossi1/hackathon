@@ -22,7 +22,7 @@ import com.example.demo.mapeador.OrdemServicoMapeador;
 import com.example.demo.servico.OrdemServicoServico;
 
 @RestController
-@RequestMapping("/ordemServico")
+@RequestMapping("/api/ordemServico")
 public class OrdemServicoControladora {
 
 	private final OrdemServicoServico ordemServicoServico;

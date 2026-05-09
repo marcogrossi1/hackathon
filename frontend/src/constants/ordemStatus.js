@@ -1,0 +1,6 @@
+export const ORDEM_STATUS_OPTIONS = [
+  'ATIVO',
+  'EM_PROGRESSO',
+  'EM_EMPEDIMENTO',
+  'CONCLUIDA',
+]

@@ -9,8 +9,7 @@ import com.example.demo.servico.ClienteServico;
 
 @RestController
 @RequestMapping(
-    //APIProtegidoConfig.PATH + 
-    "/cliente")
+    "/api/cliente")
 public class ClienteControlador {
     
     private final ClienteServico clienteServico;
