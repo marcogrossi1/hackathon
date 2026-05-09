@@ -16,7 +16,7 @@ import com.example.demo.servico.LocalizacaoServico;
 @RestController
 @RequestMapping(
 		// APIProtegidoConfig.PATH +
-		"/localizacao")
+		"/api/localizacao")
 public class LocalizacaoControlador {
 
 	private final LocalizacaoServico localizacaoServico;
